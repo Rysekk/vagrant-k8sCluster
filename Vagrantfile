@@ -1,6 +1,5 @@
 
 Vagrant.configure("2") do |config|
-  etcHosts= ""
     
   config.vm.box="ubuntu/bionic64"
   config.vm.box_url="ubuntu/bionic64"
@@ -20,4 +19,13 @@ Vagrant.configure("2") do |config|
       cfg.vm.network "private_network", ip: node[:ip]
       cfg.vm.provider "virtualbox" do |v|
         v.customize["modifyvm", :id, "--cpus", node[:cpus]]
+        v.customize["modifyvm", :id, "--memory", node[:mem]]
+        v.customize["modifyvm", :id, "--natdnsproxy1", "on"]
+        v.customize["modifyvm", :id, "--natdnshostresolver1", "on"]
+        v.customize["modifyvm", :id, "--name", node[:hostname]]
+      end
+      cfg.vm.provision "ansible" do |ansible|
+        ansible.playbook = "provision.yml"
+      end
+    end
 end
