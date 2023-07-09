@@ -24,7 +24,7 @@ Vagrant.configure("2") do |config|
       	end
 	end
 	else
-	# do nothing
+	# do nothing.
 	end
 
 
