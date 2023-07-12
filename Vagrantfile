@@ -9,7 +9,7 @@ Vagrant.configure("2") do |config|
 	when "provision", "up"
 
 	print "Do you want nginx as ingress controller (y/n) ?\n"
-	ingressNginx = STDIN.get.chomp
+	ingressNginx = STDIN.gets.chomp
 	print "\n"
   
 	if ingressNginx == "y"
@@ -42,11 +42,11 @@ Vagrant.configure("2") do |config|
 
 
 	NODES.each do |node|
-	if node[:type] != "haproxy"
-		etcHosts += "echo '" + node[:ip] + "   " + node[:hostname] + "' >> /etc/hosts" + "\n"
-	else
-		etcHosts += "echo '" + node[:ip] + "   " + node[:hostname] + "'  autoelb.kub ' >> /etc/hosts" + "\n"
-	end
+		if node[:type] != "haproxy"
+			etcHosts += "echo '" + node[:ip] + "   " + node[:hostname] + "' >> /etc/hosts" + "\n"
+		else
+			etcHosts += "echo '" + node[:ip] + "   " + node[:hostname] + "  autoelb.kub ' >> /etc/hosts" + "\n"
+		end
 	end
 
 
@@ -55,26 +55,26 @@ Vagrant.configure("2") do |config|
 			cfg.vm.hostname = node[:hostname]
 			cfg.vm.network "private_network", ip: node[:ip]
 			cfg.vm.provider "virtualbox" do |v|
-				v.customize["modifyvm", :id, "--cpus", node[:cpus]]
-				v.customize["modifyvm", :id, "--memory", node[:mem]]
-				v.customize["modifyvm", :id, "--natdnsproxy1", "on"]
-				v.customize["modifyvm", :id, "--natdnshostresolver1", "on"]
-				v.customize["modifyvm", :id, "--name", node[:hostname]]
+				v.customize ["modifyvm", :id, "--cpus", node[:cpus]]
+				v.customize ["modifyvm", :id, "--memory", node[:mem]]
+				v.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
+				v.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+				v.customize ["modifyvm", :id, "--name", node[:hostname]]
 			end #end provider
 			#for all
-			cfg.vm.provision :shell, inline=> etcHosts
-			if node[:type] == "haproxy"             aaa         
-				cfg.vm.provision :shell, path=> "install_haproxy.sh"
+			cfg.vm.provision :shell, :inline => etcHosts
+			if node[:type] == "haproxy" 
+				cfg.vm.provision :shell, :path=> "install_haproxy.sh"
 			end
 			if node[:type] == "kub"
-				cfg.vm.provision :shell, path=> "common.sh"
+				cfg.vm.provision :shell, :path=> "common.sh"
 			end
 			if node[:type] == "deploy"
-				cfg.vm.provision :shell, path=> "common.sh"
-				cfg.vm.provision :shell, path=> "install_kubspray.sh", :args => ingressNginx
+				cfg.vm.provision :shell, :path=> "common.sh"
+				cfg.vm.provision :shell, :path=> "install_kubspray.sh", :args => ingressNginx
 				if wordpress == "y"
-					cfg.vm.provision :shell, path=> "install_nfs.sh"
-					cfg.vm.provision :shell, path=> "install_wordpress.sh", args => wordpressUrl
+					cfg.vm.provision :shell, :path=> "install_nfs.sh"
+					cfg.vm.provision :shell, :path=> "install_wordpress.sh", :args => wordpressUrl
 				end
 			end
 		end # end config
