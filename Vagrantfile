@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
 
 	case ARGV[0]
 	when "provision", "up"
-
+#test
 	print "Do you want nginx as ingress controller (y/n) ?\n"
 	ingressNginx = STDIN.gets.chomp
 	print "\n"
