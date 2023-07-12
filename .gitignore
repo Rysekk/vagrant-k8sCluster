@@ -1,4 +1,0 @@
-# Ignorer les fichiers log des vm 
-*.log
-.vagrant
-.gitignore
